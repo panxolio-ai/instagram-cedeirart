@@ -1,0 +1,6 @@
+.env
+gh_token.txt
+_orixinais/
+material/
+
+# publicacions/ SI vai a git (é o que le o GitHub Action para publicar)
