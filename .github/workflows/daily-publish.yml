@@ -1,0 +1,43 @@
+name: Publicación diaria en Instagram
+
+on:
+  schedule:
+    # 17:00 e 18:00 UTC = 19:00 hora de España en verán e inverno respectivamente.
+    # O script comproba a hora real de Madrid antes de publicar.
+    - cron: "0 17 * * *"
+    - cron: "0 18 * * *"
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Data a publicar (AAAA-MM-DD). Baleiro = hoxe."
+        required: false
+        default: ""
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Publicar
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          FTP_HOST: ${{ secrets.FTP_HOST }}
+          FTP_USER: ${{ secrets.FTP_USER }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_REMOTE_DIR: ${{ secrets.FTP_REMOTE_DIR }}
+        run: |
+          python3 scripts/publish_daily.py ${{ github.event.inputs.date }}
+
+      - name: Commit do estado (PUBLICADO)
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add publicacions/ || true
+          git diff --cached --quiet || git commit -m "Marcar publicación como publicada [skip ci]"
+          git push || true

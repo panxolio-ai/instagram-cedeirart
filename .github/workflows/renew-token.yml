@@ -1,0 +1,34 @@
+name: Renovar token de Instagram
+
+on:
+  schedule:
+    # Cada luns, ás 8:00 UTC. O token dura 60 días; renovándoo semanalmente nunca caduca.
+    - cron: "0 8 * * 1"
+  workflow_dispatch: {}
+
+jobs:
+  renew:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Renovar token
+        id: renew
+        env:
+          APP_ID: ${{ secrets.APP_ID }}
+          APP_SECRET: ${{ secrets.APP_SECRET }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+        run: |
+          NEW_TOKEN=$(python3 scripts/renew_token.py)
+          echo "::add-mask::$NEW_TOKEN"
+          echo "new_token=$NEW_TOKEN" >> "$GITHUB_OUTPUT"
+
+      - name: Gardar novo token como Secret
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          gh secret set IG_ACCESS_TOKEN -b "${{ steps.renew.outputs.new_token }}"
