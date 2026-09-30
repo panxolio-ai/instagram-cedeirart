@@ -78,14 +78,28 @@ def find_media_file(day_dir: Path):
     raise SystemExit(f"Non atopei ningún arquivo de media en {day_dir}")
 
 
+def resolve_ipv4(host: str) -> str:
+    """Algúns runners non teñen ruta IPv6; forzamos resolución IPv4."""
+    import socket
+    infos = socket.getaddrinfo(host, 21, socket.AF_INET, socket.SOCK_STREAM)
+    return infos[0][4][0]
+
+
+def ftp_connect(host: str, user: str, password: str) -> ftplib.FTP:
+    ip = resolve_ipv4(host)
+    ftp = ftplib.FTP(timeout=60)
+    ftp.connect(ip, 21)
+    ftp.login(user, password)
+    return ftp
+
+
 def ftp_upload(local_path: Path) -> str:
     host = env("FTP_HOST")
     user = env("FTP_USER")
     password = env("FTP_PASSWORD")
     remote_dir = os.environ.get("FTP_REMOTE_DIR", "/")
 
-    ftp = ftplib.FTP(host, timeout=60)
-    ftp.login(user, password)
+    ftp = ftp_connect(host, user, password)
     if remote_dir and remote_dir != "/":
         ftp.cwd(remote_dir)
     with open(local_path, "rb") as f:
@@ -100,8 +114,7 @@ def ftp_delete(filename: str):
     password = env("FTP_PASSWORD")
     remote_dir = os.environ.get("FTP_REMOTE_DIR", "/")
     try:
-        ftp = ftplib.FTP(host, timeout=60)
-        ftp.login(user, password)
+        ftp = ftp_connect(host, user, password)
         if remote_dir and remote_dir != "/":
             ftp.cwd(remote_dir)
         ftp.delete(filename)
