@@ -3,6 +3,11 @@
 Publica en Instagram a publicación do día correspondente en publicacions/AAAA-MM-DD/.
 So publica se existe un ficheiro APROBADO nesa carpeta.
 
+O arquivo multimedia sírvese directamente dende GitHub (raw.githubusercontent.com),
+a partir do commit que se está a executar no workflow — non fai falla subilo a
+ningún outro sitio. Require que o repositorio sexa público (ou que a URL raw sexa
+accesible dende internet).
+
 Uso: publish_daily.py [AAAA-MM-DD]
 Se non se indica data, usa a data de hoxe (hora de España).
 """
@@ -10,7 +15,6 @@ import os
 import re
 import sys
 import time
-import ftplib
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -19,7 +23,6 @@ import urllib.parse
 import json
 
 ROOT = Path(__file__).resolve().parent.parent
-PUBLIC_BASE_URL = "https://ariacedeira.gal/ig"
 GRAPH_API = "https://graph.facebook.com/v21.0"
 
 
@@ -78,49 +81,12 @@ def find_media_file(day_dir: Path):
     raise SystemExit(f"Non atopei ningún arquivo de media en {day_dir}")
 
 
-def resolve_ipv4(host: str) -> str:
-    """Algúns runners non teñen ruta IPv6; forzamos resolución IPv4."""
-    import socket
-    infos = socket.getaddrinfo(host, 21, socket.AF_INET, socket.SOCK_STREAM)
-    return infos[0][4][0]
-
-
-def ftp_connect(host: str, user: str, password: str) -> ftplib.FTP:
-    ip = resolve_ipv4(host)
-    ftp = ftplib.FTP(timeout=60)
-    ftp.connect(ip, 21)
-    ftp.login(user, password)
-    return ftp
-
-
-def ftp_upload(local_path: Path) -> str:
-    host = env("FTP_HOST")
-    user = env("FTP_USER")
-    password = env("FTP_PASSWORD")
-    remote_dir = os.environ.get("FTP_REMOTE_DIR", "/")
-
-    ftp = ftp_connect(host, user, password)
-    if remote_dir and remote_dir != "/":
-        ftp.cwd(remote_dir)
-    with open(local_path, "rb") as f:
-        ftp.storbinary(f"STOR {local_path.name}", f)
-    ftp.quit()
-    return f"{PUBLIC_BASE_URL}/{local_path.name}"
-
-
-def ftp_delete(filename: str):
-    host = env("FTP_HOST")
-    user = env("FTP_USER")
-    password = env("FTP_PASSWORD")
-    remote_dir = os.environ.get("FTP_REMOTE_DIR", "/")
-    try:
-        ftp = ftp_connect(host, user, password)
-        if remote_dir and remote_dir != "/":
-            ftp.cwd(remote_dir)
-        ftp.delete(filename)
-        ftp.quit()
-    except Exception as e:
-        print(f"Aviso: non se puido borrar {filename} do FTP: {e}")
+def public_url_for(media_path: Path) -> str:
+    """URL pública do arquivo, servido directamente dende GitHub (repo público)."""
+    repo = env("GITHUB_REPOSITORY")  # "owner/repo", proporcionado por Actions
+    sha = env("GITHUB_SHA")  # commit exacto que se está a executar
+    rel_path = media_path.relative_to(ROOT).as_posix()
+    return f"https://raw.githubusercontent.com/{repo}/{sha}/{urllib.parse.quote(rel_path)}"
 
 
 def api_post(path: str, data: dict) -> dict:
@@ -183,8 +149,7 @@ def main():
     access_token = env("IG_ACCESS_TOKEN")
     ig_user_id = env("IG_USER_ID")
 
-    print(f"Subindo {media_path.name} por FTP...")
-    public_url = ftp_upload(media_path)
+    public_url = public_url_for(media_path)
     print(f"URL pública: {public_url}")
 
     is_video = media_path.suffix.lower() == ".mp4"
@@ -221,9 +186,6 @@ def main():
         f"Publicado o {datetime.now(ZoneInfo('Europe/Madrid')).isoformat()} — media id {publish['id']}\n",
         encoding="utf-8",
     )
-
-    print("Borrando arquivo do FTP...")
-    ftp_delete(media_path.name)
     print("Feito.")
 
 
