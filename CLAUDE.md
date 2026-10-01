@@ -28,29 +28,37 @@ Mensaxe de fondo: **"ven a Cedeira a vivir a ópera nun lugar único"**.
   - Descargar en `material/internet/` e anotar cada unha en `material/internet/creditos.md` co arquivo, autor, licenza e URL orixinal.
   - Cando a licenza pida atribución (CC BY, CC BY-SA), poñer o crédito ao final do texto da publicación (ex.: "📷 Autor / CC BY-SA 4.0 / Wikimedia Commons").
   - Non usar imaxes onde se recoñezan caras de persoas.
+- Música libre para os reels de imaxes de Cedeira/Xeoparque (non gravacións do festival): só con licenzas que permitan uso comercial/promocional:
+  - Fontes preferentes: YouTube Audio Library, Pixabay Music, Free Music Archive (filtrando por CC BY/CC0).
+  - Mesmas regras de licenza ca as imaxes (válido: dominio público, CC0, CC BY; non válido: NC, ND, sen licenza clara).
+  - Anotar tamén en `material/internet/creditos.md` (arquivo, autor/música, licenza, URL orixinal).
+  - Cando a licenza pida atribución, engadir o crédito ao final do texto da publicación.
 
 ## Plan de publicacións
 
-- Unha publicación ao día, ás **19:00 hora de España**.
+- **Dúas publicacións ao día**: unha ás **13:00** (Cedeira ou Xeoparque) e outra ás **19:00** (festival/ópera) hora de España. (Cambio decidido o 2026-10-01; a primeira semana preparada antes desa data segue co formato antigo de 1 publicación/día.)
 - Alternar reels (mínimo 3 por semana), carruseis e fotos.
-- Mestura semanal orientativa: 2 festival/ópera, 2 Cedeira, 1 Xeoparque, 1 detrás das cámaras ou alumnado, 1 libre (curiosidades de ópera, repertorio, cantantes).
+- Intercalar tamén reels feitos con fotos de Cedeira/Xeoparque + música libre (non só vídeo do festival) para promocionar o destino.
+- Mestura semanal orientativa por franxa: a franxa das 19:00 adoita ser festival/ópera; a franxa das 13:00 adoita ser Cedeira ou Xeoparque, con algún día de detrás das cámaras/alumnado ou contido libre (curiosidades de ópera, repertorio, cantantes) intercalado.
 - Os mellores reels combinan música do festival con paisaxes de Cedeira ou do Xeoparque.
 
 ## Vídeos
 
-- Reels verticais 1080x1920, de 15 a 45 segundos, montados con ffmpeg.
-- Un texto forte nos primeiros 2 segundos e subtítulos cando haxa voz ou texto importante.
-- Audio só das gravacións propias do festival.
+- Reels de 15 a 45 segundos, montados con ffmpeg, mantendo a resolución e proporción orixinais do vídeo de orixe (sen recortalo nin engadir bandas difuminadas arriba/abaixo — así quedou acordado o 2026-10-01 tras a primeira proba).
+- Un texto forte nos primeiros 2 segundos e un pé de texto permanente coa peza/festival.
+- Audio das gravacións propias do festival (para reels de ópera) ou música libre licenciada (para reels de imaxes de Cedeira/Xeoparque).
 
 ## Fluxo de traballo
 
-- Cando Fran diga **"prepara a semana"**: crear en `publicacions/AAAA-MM-DD/` cada publicación co seu arquivo (imaxe, carrusel ou vídeo) e un `texto.md` co texto, os hashtags, os créditos e a hora.
-- Non publicar nada sen aprobación previa de Fran. Cando diga **"aprobado"**, marcar esa semana como lista (ex.: crear un ficheiro `APROBADO` na carpeta da semana).
-- Script de publicación diaria coa API oficial de Instagram (Instagram API with Instagram Login). Token e ID de usuario en `.env` (`IG_ACCESS_TOKEN`, `IG_USER_ID`).
-- A API precisa URLs públicas: subir primeiro os arquivos por FTP a `ariacedeira.gal/ig/` (credenciais FTP tamén en `.env`) e borralos despois de publicar.
-- Publicación automática con GitHub Actions para que funcione aínda co ordenador apagado. Token en GitHub Secrets, nunca no código.
-- O script debe renovar o token antes de que caduque (cada 60 días).
-- Cada domingo revisar as estatísticas da semana e propor melloras a Fran.
+- Cando Fran diga **"prepara a semana"**: crear cada publicación co seu arquivo (imaxe, carrusel ou vídeo) e un `texto.md` co texto, os hashtags, os créditos e a hora:
+  - Formato novo (2 publicacións/día, dende 2026-10-01): `publicacions/AAAA-MM-DD/13h-<categoría>/` e `publicacions/AAAA-MM-DD/19h-<categoría>/`.
+  - A primeira semana (2026-09-30 a 2026-10-06) quedou co formato antigo dunha soa carpeta `publicacions/AAAA-MM-DD/` — non facía falla migrala.
+- Non publicar nada sen aprobación previa de Fran. Cando diga **"aprobado"**, crear un ficheiro `APROBADO` en cada carpeta de publicación lista (do día ou da franxa horaria, segundo o formato).
+- Script de publicación (`scripts/publish_daily.py`) coa API oficial de Instagram (Instagram API with Instagram Login). Token e ID de usuario en `.env` (`IG_ACCESS_TOKEN`, `IG_USER_ID`).
+- A API precisa URLs públicas: os arquivos xa están no repositorio de GitHub (público) e sírvense directamente dende `raw.githubusercontent.com` — non se usa FTP para isto (o hosting de ariacedeira.gal bloquea conexións FTP dende IPs de datacenter/nube, comprobado o 2026-09-30). As credenciais FTP (`.env`) quedan gardadas para outros usos puntuais, non para a publicación automática.
+- Publicación automática con GitHub Actions (`.github/workflows/daily-publish.yml`) para que funcione aínda co ordenador apagado. Token en GitHub Secrets, nunca no código.
+- O script de renovación (`scripts/renew_token.py`, workflow `renew-token.yml`) renova o token cada luns, antes de que caduque (cada 60 días).
+- Cada domingo revisar as estatísticas da semana e propor melloras a Fran (pendente de configurar como tarefa programada).
 
 ## Estratexia para novos públicos
 
@@ -75,11 +83,25 @@ material/
   fotos/opera/       — fotos propias do festival (477 fotos xa importadas)
   fotos/cedeira/      — fotos propias de Cedeira
   videos/             — gravacións propias do festival (autorización firmada)
-  internet/            — descargas con licenza libre + creditos.md
+                         + autorizacions.md (índice de participantes/autorizacións)
+  internet/            — descargas con licenza libre (fotos e música) + creditos.md
 publicacions/
-  AAAA-MM-DD/           — unha carpeta por semana preparada
-scripts/               — scripts de publicación, renovación de token, estatísticas
-.github/workflows/      — automatización de publicación diaria
-_orixinais/             — arquivos orixinais sen procesar (zips, etc.)
-.env                    — segredos (NON subir a git): IG_ACCESS_TOKEN, IG_USER_ID, FTP_*
+  AAAA-MM-DD/                     — formato antigo (1 publicación/día, só semana 1)
+  AAAA-MM-DD/13h-<categoría>/     — formato novo, publicación do mediodía
+  AAAA-MM-DD/19h-<categoría>/     — formato novo, publicación da tarde
+scripts/
+  publish_daily.py      — publica (lé APROBADO/PUBLICADO, chama á API de Instagram)
+  renew_token.py         — renova o IG_ACCESS_TOKEN (chámao renew-token.yml cada luns)
+  make_reel.sh            — monta un reel con ffmpeg (recorte + texto, resolución orixinal)
+  check_token.sh           — comproba que o token funciona
+  exchange_token.sh         — troca un token curto por un de longa duración (setup manual)
+.github/workflows/
+  daily-publish.yml     — publica ás 13:00 e 19:00 (hora España) + workflow_dispatch manual
+  renew-token.yml         — renova o token cada luns
+_orixinais/             — arquivos orixinais sen procesar (zips, etc.) — NON vai a git
+.env                    — segredos (NON vai a git): IG_ACCESS_TOKEN, IG_USER_ID, APP_ID,
+                           APP_SECRET, FTP_* (FTP gardado para outros usos, non a publicación)
+
+Repositorio de GitHub: github.com/panxolio-ai/instagram-cedeirart (PÚBLICO dende 2026-10-01,
+necesario para que raw.githubusercontent.com sirva os arquivos; os Secrets seguen protexidos).
 ```

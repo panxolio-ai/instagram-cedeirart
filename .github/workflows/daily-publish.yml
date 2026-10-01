@@ -2,8 +2,11 @@ name: Publicación diaria en Instagram
 
 on:
   schedule:
-    # 17:00 e 18:00 UTC = 19:00 hora de España en verán e inverno respectivamente.
-    # O script comproba a hora real de Madrid antes de publicar.
+    # 11:00 e 12:00 UTC = 13:00 hora de España en verán e inverno (franxa do mediodía).
+    # 17:00 e 18:00 UTC = 19:00 hora de España en verán e inverno (franxa da tarde).
+    # O script comproba a hora real de Madrid e a franxa de cada publicación antes de publicar.
+    - cron: "0 11 * * *"
+    - cron: "0 12 * * *"
     - cron: "0 17 * * *"
     - cron: "0 18 * * *"
   workflow_dispatch:

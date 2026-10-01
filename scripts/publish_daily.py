@@ -1,15 +1,22 @@
 #!/usr/bin/env python3
 """
-Publica en Instagram a publicación do día correspondente en publicacions/AAAA-MM-DD/.
-So publica se existe un ficheiro APROBADO nesa carpeta.
+Publica en Instagram a(s) publicación(s) do día correspondente en publicacions/AAAA-MM-DD/.
+So publica se existe un ficheiro APROBADO na carpeta dese post.
+
+Soporta dous formatos de carpeta:
+- Antigo (1 publicación/día): publicacions/AAAA-MM-DD/{reel.mp4|foto.jpg, texto.md, APROBADO}
+- Novo (varias publicacións/día, por franxa horaria): publicacions/AAAA-MM-DD/13h-*/{...} ,
+  publicacions/AAAA-MM-DD/19h-*/{...} — o número ao principio do nome da carpeta marca a
+  hora (en Madrid) á que se debe publicar.
 
 O arquivo multimedia sírvese directamente dende GitHub (raw.githubusercontent.com),
 a partir do commit que se está a executar no workflow — non fai falla subilo a
-ningún outro sitio. Require que o repositorio sexa público (ou que a URL raw sexa
-accesible dende internet).
+ningún outro sitio. Require que o repositorio sexa público.
 
 Uso: publish_daily.py [AAAA-MM-DD]
-Se non se indica data, usa a data de hoxe (hora de España).
+Se non se indica data, usa a data de hoxe (hora de España) e respecta as franxas horarias.
+Se se indica data explicitamente, publica tódolos posts aprobados e non publicados dese día,
+sen importar a hora (útil para probas e execucións manuais).
 """
 import os
 import re
@@ -73,12 +80,12 @@ def build_caption(sections: dict) -> str:
     return caption.strip()
 
 
-def find_media_file(day_dir: Path):
+def find_media_file(post_dir: Path):
     for name in ("reel.mp4", "foto.jpg", "foto.jpeg", "foto.png"):
-        p = day_dir / name
+        p = post_dir / name
         if p.exists():
             return p
-    raise SystemExit(f"Non atopei ningún arquivo de media en {day_dir}")
+    raise SystemExit(f"Non atopei ningún arquivo de media en {post_dir}")
 
 
 def public_url_for(media_path: Path) -> str:
@@ -117,32 +124,35 @@ def wait_until_ready(creation_id: str, access_token: str, timeout_s=600):
     raise SystemExit("Tempo esgotado esperando a que Instagram procese o media.")
 
 
-def main():
-    now_madrid = datetime.now(ZoneInfo("Europe/Madrid"))
-    date_str = sys.argv[1] if len(sys.argv) > 1 else now_madrid.strftime("%Y-%m-%d")
+def find_posts(day_dir: Path):
+    """Devolve unha lista de (nome, post_dir, hora_programada_ou_None)."""
+    # Formato antigo: media directamente na carpeta do día.
+    for name in ("reel.mp4", "foto.jpg", "foto.jpeg", "foto.png"):
+        if (day_dir / name).exists():
+            return [("", day_dir, None)]
 
-    # Garda horaria: só publica sobre as 19:00 hora de España (agás chamada manual con data explícita).
-    force = len(sys.argv) > 1
-    if not force and not (18 <= now_madrid.hour <= 19):
-        print(f"Son as {now_madrid.strftime('%H:%M')} en Madrid, fóra da xanela das 19:00. Non se publica nesta execución.")
-        return
+    # Formato novo: subcarpetas tipo "13h-territorio", "19h-festival".
+    posts = []
+    for sub in sorted(day_dir.iterdir()):
+        if not sub.is_dir():
+            continue
+        m = re.match(r"^(\d{1,2})h", sub.name)
+        hour = int(m.group(1)) if m else None
+        posts.append((sub.name, sub, hour))
+    return posts
 
-    day_dir = ROOT / "publicacions" / date_str
 
-    if not day_dir.exists():
-        print(f"Non hai publicación preparada para {date_str}. Nada que facer.")
-        return
+def publish_post(post_dir: Path, label: str) -> bool:
+    if not (post_dir / "APROBADO").exists():
+        print(f"[{label}] Non está aprobado. Non se publica.")
+        return False
 
-    if not (day_dir / "APROBADO").exists():
-        print(f"A publicación de {date_str} non está aprobada. Non se publica.")
-        return
+    if (post_dir / "PUBLICADO").exists():
+        print(f"[{label}] Xa foi publicado anteriormente. Non se repite.")
+        return False
 
-    if (day_dir / "PUBLICADO").exists():
-        print(f"A publicación de {date_str} xa foi publicada anteriormente. Non se repite.")
-        return
-
-    media_path = find_media_file(day_dir)
-    texto_path = day_dir / "texto.md"
+    media_path = find_media_file(post_dir)
+    texto_path = post_dir / "texto.md"
     sections = parse_texto(texto_path)
     caption = build_caption(sections)
 
@@ -150,7 +160,7 @@ def main():
     ig_user_id = env("IG_USER_ID")
 
     public_url = public_url_for(media_path)
-    print(f"URL pública: {public_url}")
+    print(f"[{label}] URL pública: {public_url}")
 
     is_video = media_path.suffix.lower() == ".mp4"
     create_data = {
@@ -163,30 +173,65 @@ def main():
     else:
         create_data["image_url"] = public_url
 
-    print("Creando contedor de media en Instagram...")
+    print(f"[{label}] Creando contedor de media en Instagram...")
     creation = api_post(f"{ig_user_id}/media", create_data)
     if "id" not in creation:
-        raise SystemExit(f"Erro creando o contedor: {creation}")
+        raise SystemExit(f"[{label}] Erro creando o contedor: {creation}")
     creation_id = creation["id"]
-    print(f"Contedor creado: {creation_id}")
+    print(f"[{label}] Contedor creado: {creation_id}")
 
     if is_video:
         wait_until_ready(creation_id, access_token)
 
-    print("Publicando...")
+    print(f"[{label}] Publicando...")
     publish = api_post(f"{ig_user_id}/media_publish", {
         "creation_id": creation_id,
         "access_token": access_token,
     })
     if "id" not in publish:
-        raise SystemExit(f"Erro publicando: {publish}")
+        raise SystemExit(f"[{label}] Erro publicando: {publish}")
 
-    print(f"Publicado correctamente! Media ID: {publish['id']}")
-    (day_dir / "PUBLICADO").write_text(
+    print(f"[{label}] Publicado correctamente! Media ID: {publish['id']}")
+    (post_dir / "PUBLICADO").write_text(
         f"Publicado o {datetime.now(ZoneInfo('Europe/Madrid')).isoformat()} — media id {publish['id']}\n",
         encoding="utf-8",
     )
-    print("Feito.")
+    return True
+
+
+def main():
+    now_madrid = datetime.now(ZoneInfo("Europe/Madrid"))
+    date_str = sys.argv[1] if len(sys.argv) > 1 else now_madrid.strftime("%Y-%m-%d")
+    force = len(sys.argv) > 1  # data explícita = ignora a xanela horaria
+
+    day_dir = ROOT / "publicacions" / date_str
+    if not day_dir.exists():
+        print(f"Non hai publicación preparada para {date_str}. Nada que facer.")
+        return
+
+    posts = find_posts(day_dir)
+    if not posts:
+        print(f"Non atopei ningunha publicación en {day_dir}.")
+        return
+
+    any_published = False
+    for name, post_dir, hour in posts:
+        label = f"{date_str}/{name}" if name else date_str
+
+        if not force and hour is not None and not (hour <= now_madrid.hour <= hour + 1):
+            print(f"[{label}] Son as {now_madrid.strftime('%H:%M')} en Madrid, fóra da xanela das {hour}:00. Omitido nesta execución.")
+            continue
+        if not force and hour is None:
+            # Formato antigo, sen hora no nome: usa a xanela clásica das 19:00.
+            if not (18 <= now_madrid.hour <= 19):
+                print(f"[{label}] Son as {now_madrid.strftime('%H:%M')} en Madrid, fóra da xanela das 19:00. Omitido nesta execución.")
+                continue
+
+        if publish_post(post_dir, label):
+            any_published = True
+
+    if not any_published:
+        print("Non se publicou nada nesta execución.")
 
 
 if __name__ == "__main__":
