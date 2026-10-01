@@ -19,6 +19,8 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -37,6 +39,5 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add publicacions/ || true
-          git diff --cached --quiet || git commit -m "Marcar publicación como publicada [skip ci]"
-          git push || true
+          git add publicacions/
+          git diff --cached --quiet || (git commit -m "Marcar publicación como publicada [skip ci]" && git push)
