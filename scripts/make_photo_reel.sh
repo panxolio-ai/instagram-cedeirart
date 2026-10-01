@@ -61,7 +61,7 @@ FILTER+="[${N}:a]afade=t=in:st=0:d=1,afade=t=out:st=${FADE_OUT_ST}:d=2[a]"
 
 ffmpeg -y "${INPUTS[@]}" -filter_complex "$FILTER" \
   -map "[v]" -map "[a]" -t "$TOTAL_DUR" \
-  -c:v libx264 -preset medium -crf 20 -c:a aac -b:a 192k -pix_fmt yuv420p \
+  -c:v libx264 -profile:v main -level 3.1 -preset medium -crf 20 -c:a aac -b:a 192k -pix_fmt yuv420p -movflags +faststart \
   "$OUTPUT" -loglevel error
 
 echo "Reel de fotos creado: $OUTPUT (${TOTAL_DUR}s)"

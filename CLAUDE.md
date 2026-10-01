@@ -27,7 +27,9 @@ Mensaxe de fondo: **"ven a Cedeira a vivir a ópera nun lugar único"**.
   - Fontes preferentes: Wikimedia Commons, Unsplash e Pexels.
   - Descargar en `material/internet/` e anotar cada unha en `material/internet/creditos.md` co arquivo, autor, licenza e URL orixinal.
   - Cando a licenza pida atribución (CC BY, CC BY-SA), poñer o crédito ao final do texto da publicación (ex.: "📷 Autor / CC BY-SA 4.0 / Wikimedia Commons").
-  - Non usar imaxes onde se recoñezan caras de persoas.
+  - Non usar imaxes onde se recoñezan caras de persoas (dereito á propia imaxe: a licenza CC cobre o copyright da foto, non o dereito de imaxe de quen sae nela). Permítese xente en ambiente (praia, festas, camiñadas) só se é anónima de verdade — de costas, moi lonxe ou en grupo borroso, nunca un primeiro plano recoñecible, aínda que sexa un descoñecido (regra confirmada o 2026-10-01).
+  - Preferir sempre fotos realmente soleadas (ceo azul). Se só hai nubradas dispoñibles, preguntar antes de usalas tal cal.
+  - Aplicar `scripts/enhance_photo.sh` ás fotos de territorio antes de publicalas (dá máis cor e vida, pero non convirte unha foto nubrada en soleada).
 - Música libre para os reels de imaxes de Cedeira/Xeoparque (non gravacións do festival): só con licenzas que permitan uso comercial/promocional:
   - Fontes preferentes: YouTube Audio Library, Pixabay Music, Free Music Archive (filtrando por CC BY/CC0).
   - Mesmas regras de licenza ca as imaxes (válido: dominio público, CC0, CC BY; non válido: NC, ND, sen licenza clara).
