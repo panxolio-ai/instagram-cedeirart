@@ -16,7 +16,7 @@
 Cedeira, A Coruña
 
 ## Créditos
-📷 Wolffoxylady / CC BY-SA 4.0 / Wikimedia Commons
+📷 Luis Miguel Bugallo Sánchez (Lmbuga) / CC BY-SA 3.0 / Wikimedia Commons
 
 ## Arquivo
-foto.jpg (Monumento do porto de Cedeira)
+foto.jpg (Ría de Cedeira)

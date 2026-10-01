@@ -16,7 +16,7 @@
 Cabo Ortegal
 
 ## Créditos
-📷 Sustiputo / CC BY-SA 4.0 / Wikimedia Commons
+📷 mib18 / CC BY-SA 3.0 / Wikimedia Commons
 
 ## Arquivo
-foto.jpg (Os Aguillóns, Cabo Ortegal)
+foto.jpg (Faro e Os Aguillóns, Cabo Ortegal)
