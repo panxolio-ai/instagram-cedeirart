@@ -41,6 +41,7 @@ Mensaxe de fondo: **"ven a Cedeira a vivir a ópera nun lugar único"**.
 - Intercalar tamén reels feitos con fotos de Cedeira/Xeoparque + música libre (non só vídeo do festival) para promocionar o destino.
 - Mestura semanal orientativa por franxa: a franxa das 19:00 adoita ser festival/ópera; a franxa das 13:00 adoita ser Cedeira ou Xeoparque, con algún día de detrás das cámaras/alumnado ou contido libre (curiosidades de ópera, repertorio, cantantes) intercalado.
 - Os mellores reels combinan música do festival con paisaxes de Cedeira ou do Xeoparque.
+- **Regra importante (2026-10-01)**: o contido de territorio (Cedeira/Xeoparque) NUNCA vai só de turismo xenérico — sempre ten que ligar co festival no texto (ex. "a vila que acolle a ópera", "ven vivir a ópera aquí"). Nos reels de fotos de territorio, mesturar sempre algunha foto do festival entre as de paisaxe (usar `scripts/make_photo_reel.sh`).
 
 ## Vídeos
 
@@ -92,7 +93,8 @@ publicacions/
 scripts/
   publish_daily.py      — publica (lé APROBADO/PUBLICADO, chama á API de Instagram)
   renew_token.py         — renova o IG_ACCESS_TOKEN (chámao renew-token.yml cada luns)
-  make_reel.sh            — monta un reel con ffmpeg (recorte + texto, resolución orixinal)
+  make_reel.sh            — monta un reel con ffmpeg (recorte de vídeo + texto, resolución orixinal)
+  make_photo_reel.sh       — monta un reel de fotos (Ken Burns) + música libre, para territorio
   check_token.sh           — comproba que o token funciona
   exchange_token.sh         — troca un token curto por un de longa duración (setup manual)
 .github/workflows/
