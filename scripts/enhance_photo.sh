@@ -7,6 +7,7 @@ INPUT="$1"
 OUTPUT="$2"
 
 convert "$INPUT" \
+  -auto-orient \
   -modulate 103,120,100 \
   -brightness-contrast 3x12 \
   -auto-gamma \
