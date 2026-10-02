@@ -1,13 +1,13 @@
 # 2026-10-03 · Sábado · 13:00 · FOTO · Territorio (Xeoparque)
 
 ## Texto (galego)
-🌊 Antes do concerto da tarde, unha mañá no Xeoparque Mundial UNESCO Cabo Ortegal. Cantís, mar e silencio — o contrapunto perfecto á música da noite.
+🌊 Cantís, mar e silencio no Xeoparque Mundial UNESCO Cabo Ortegal — o contrapunto perfecto á música do festival.
 
 ## Texto (castellano)
-🌊 Antes del concierto de la tarde, una mañana en el Geoparque Mundial UNESCO Cabo Ortegal. Acantilados, mar y silencio — el contrapunto perfecto a la música de la noche.
+🌊 Acantilados, mar y silencio en el Geoparque Mundial UNESCO Cabo Ortegal — el contrapunto perfecto a la música del festival.
 
 ## Text (English)
-🌊 Before the evening concert, a morning at Cabo Ortegal UNESCO Global Geopark — cliffs, sea and silence, the perfect counterpoint to the night's music.
+🌊 Cliffs, sea and silence at Cabo Ortegal UNESCO Global Geopark — the perfect counterpoint to the festival's music.
 
 ## Hashtags (8 máx.)
 #XeoparqueCaboOrtegal #CaboOrtegal #Galicia #TurismoGalicia #OperaStudioCedeira #VisitGalicia #Natureza #Cedeira

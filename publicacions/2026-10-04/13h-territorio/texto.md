@@ -1,13 +1,13 @@
 # 2026-10-04 · Domingo · 13:00 · FOTO · Territorio (San Andrés de Teixido)
 
 ## Texto (galego)
-⛪ Un domingo tranquilo en San Andrés de Teixido, un dos lugares con máis lenda de toda Galicia. Esta noite, ópera en Cedeira — hoxe, paisaxe e historia.
+⛪ San Andrés de Teixido, un dos lugares con máis lenda de toda Galicia — paisaxe e historia, preto de onde soa a ópera.
 
 ## Texto (castellano)
-⛪ Un domingo tranquilo en San Andrés de Teixido, uno de los lugares con más leyenda de toda Galicia. Esta noche, ópera en Cedeira — hoy, paisaje e historia.
+⛪ San Andrés de Teixido, uno de los lugares con más leyenda de toda Galicia — paisaje e historia, cerca de donde suena la ópera.
 
 ## Text (English)
-⛪ A quiet Sunday at San Andrés de Teixido, one of Galicia's most legendary sites. Tonight, opera in Cedeira — today, landscape and history.
+⛪ San Andrés de Teixido, one of Galicia's most legendary sites — landscape and history, close to where the opera sounds.
 
 ## Hashtags (8 máx.)
 #SanAndrésDeTeixido #Cedeira #Galicia #TurismoGalicia #OperaStudioCedeira #VisitGalicia #Lenda #CostaÁrtabra

@@ -1,13 +1,13 @@
-# 2026-10-05 · Luns · 19:00 · FOTO · Cedeira
+# 2026-10-05 · Luns · 13:00 · FOTO · Territorio (porto de Cedeira)
 
 ## Texto (galego)
-⚓ O porto de Cedeira, onde as barcas conviven coa historia mariñeira da vila. Un recuncho perfecto para pasear antes ou despois do concerto.
+⚓ O porto de Cedeira, onde as barcas conviven coa historia mariñeira da vila. Un recuncho perfecto para pasear nos días de festival.
 
 ## Texto (castellano)
-⚓ El puerto de Cedeira, donde las barcas conviven con la historia marinera de la villa. Un rincón perfecto para pasear antes o después del concierto.
+⚓ El puerto de Cedeira, donde las barcas conviven con la historia marinera de la villa. Un rincón perfecto para pasear en los días de festival.
 
 ## Text (English)
-⚓ Cedeira's harbour, where fishing boats meet centuries of maritime history — the perfect spot for a stroll before or after the concert.
+⚓ Cedeira's harbour, where fishing boats meet centuries of maritime history — a perfect spot for a stroll on festival days.
 
 ## Hashtags (8 máx.)
 #Cedeira #Galicia #TurismoGalicia #Porto #CostaÁrtabra #VisitGalicia #OperaStudioCedeira #Mariñeira
