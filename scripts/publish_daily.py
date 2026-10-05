@@ -65,19 +65,28 @@ def build_caption(sections: dict) -> str:
                 parts.append(sections[key])
     caption = "\n\n".join(parts)
 
-    creditos = None
     hashtags = None
     for key, val in sections.items():
-        if key.lower().startswith("créditos") and val:
-            creditos = val
         if key.lower().startswith("hashtags") and val:
             hashtags = val
 
-    if creditos:
-        caption += f"\n\n{creditos}"
+    # Os créditos NON van no texto da publicación (decisión de Fran, 2026-10-05) —
+    # van como primeiro comentario cando a licenza esixe atribución (ver credits_requiring_attribution()).
     if hashtags:
         caption += f"\n\n{hashtags}"
     return caption.strip()
+
+
+def credits_requiring_attribution(sections: dict) -> str | None:
+    """Devolve o texto de créditos só se a licenza esixe atribución (CC BY / CC BY-SA).
+    Fotos/gravacións propias e licenza Pexels non a esixen, e nese caso non se publica nada."""
+    creditos = None
+    for key, val in sections.items():
+        if key.lower().startswith("créditos") and val:
+            creditos = val
+    if creditos and "CC BY" in creditos:
+        return creditos
+    return None
 
 
 def find_media_file(post_dir: Path):
@@ -108,6 +117,18 @@ def api_get(path: str, params: dict) -> dict:
     url = f"{GRAPH_API}/{path}?{urllib.parse.urlencode(params)}"
     with urllib.request.urlopen(url, timeout=60) as resp:
         return json.loads(resp.read().decode())
+
+
+def post_credits_comment(media_id: str, credits_text: str, access_token: str):
+    try:
+        result = api_post(f"{media_id}/comments", {
+            "message": credits_text,
+            "access_token": access_token,
+        })
+        if "id" not in result:
+            print(f"Aviso: non se puido publicar o comentario de créditos: {result}")
+    except Exception as e:
+        print(f"Aviso: erro publicando o comentario de créditos: {e}")
 
 
 def wait_until_ready(creation_id: str, access_token: str, timeout_s=600):
@@ -192,6 +213,12 @@ def publish_post(post_dir: Path, label: str) -> bool:
         raise SystemExit(f"[{label}] Erro publicando: {publish}")
 
     print(f"[{label}] Publicado correctamente! Media ID: {publish['id']}")
+
+    credits_text = credits_requiring_attribution(sections)
+    if credits_text:
+        print(f"[{label}] Publicando créditos como comentario...")
+        post_credits_comment(publish["id"], credits_text, access_token)
+
     (post_dir / "PUBLICADO").write_text(
         f"Publicado o {datetime.now(ZoneInfo('Europe/Madrid')).isoformat()} — media id {publish['id']}\n",
         encoding="utf-8",
