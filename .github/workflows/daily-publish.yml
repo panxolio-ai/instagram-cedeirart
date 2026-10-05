@@ -15,6 +15,10 @@ on:
         required: false
         default: ""
 
+concurrency:
+  group: daily-publish
+  cancel-in-progress: false
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -39,4 +43,10 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add publicacions/
-          git diff --cached --quiet || (git commit -m "Marcar publicación como publicada [skip ci]" && git push)
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Marcar publicación como publicada [skip ci]"
+          # Defensa extra ademais do "concurrency" do workflow: se o push falla por
+          # chegar outro cambio antes (push manual, etc.), reintenta unha vez facendo rebase.
+          git push || (git pull --rebase --no-edit && git push)
