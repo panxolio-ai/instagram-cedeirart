@@ -2,13 +2,12 @@ name: Publicación diaria en Instagram
 
 on:
   schedule:
-    # 11:00 e 12:00 UTC = 13:00 hora de España en verán e inverno (franxa do mediodía).
-    # 17:00 e 18:00 UTC = 19:00 hora de España en verán e inverno (franxa da tarde).
-    # O script comproba a hora real de Madrid e a franxa de cada publicación antes de publicar.
-    - cron: "0 11 * * *"
-    - cron: "0 12 * * *"
-    - cron: "0 17 * * *"
-    - cron: "0 18 * * *"
+    # Comproba cada 20 minutos entre as 10:00 e as 22:00 UTC (cobre as 13:00 e as 19:00
+    # hora de España en verán e inverno, con marxe). O script só publica se xa chegou a
+    # hora obxectivo e aínda non se publicou ese post — así, aínda que algún disparo do
+    # cron de GitHub chegue tarde (é habitual, non son puntuais), o seguinte disparo
+    # próximo colle a publicación pendente en vez de perdela todo o día.
+    - cron: "*/20 10-21 * * *"
   workflow_dispatch:
     inputs:
       date:

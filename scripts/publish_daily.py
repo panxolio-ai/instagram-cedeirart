@@ -245,14 +245,14 @@ def main():
     for name, post_dir, hour in posts:
         label = f"{date_str}/{name}" if name else date_str
 
-        if not force and hour is not None and not (hour <= now_madrid.hour <= hour + 1):
-            print(f"[{label}] Son as {now_madrid.strftime('%H:%M')} en Madrid, fóra da xanela das {hour}:00. Omitido nesta execución.")
+        # Xanela aberta: publica en canto se chegue á hora obxectivo (ou máis tarde) ESE
+        # mesmo día. Os cron de GitHub Actions non son puntuais (poden chegar con hora/s
+        # de atraso), así que unha xanela estreita facía que se perdesen publicacións
+        # enteiras — mellor publicar tarde ca non publicar (comprobado o 2026-10-05).
+        target_hour = hour if hour is not None else 19  # formato antigo = 19:00 clásico
+        if not force and now_madrid.hour < target_hour:
+            print(f"[{label}] Son as {now_madrid.strftime('%H:%M')} en Madrid, aínda non chegou a hora das {target_hour}:00. Omitido nesta execución.")
             continue
-        if not force and hour is None:
-            # Formato antigo, sen hora no nome: usa a xanela clásica das 19:00.
-            if not (18 <= now_madrid.hour <= 19):
-                print(f"[{label}] Son as {now_madrid.strftime('%H:%M')} en Madrid, fóra da xanela das 19:00. Omitido nesta execución.")
-                continue
 
         if publish_post(post_dir, label):
             any_published = True
